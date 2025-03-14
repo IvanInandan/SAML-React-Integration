@@ -10,6 +10,7 @@ const config = require("./utils/config");
 
 const loginRouter = require("./controllers/login");
 const whoamiRouter = require("./controllers/whoami");
+const infoRouter = require("./controllers/info");
 
 const app = express();
 
@@ -24,6 +25,18 @@ app.use(session(config.session));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+  console.log("Session ID:", req.sessionID);
+  console.log("User: ", req.user);
+
+  if (req.user) {
+    console.log("User NameID:", req.user.nameID); // ✅ Logs the SAML nameID
+  } else {
+    console.log("No user authenticated yet.");
+  }
+  next();
+});
+
 // Define login route (passport / SAML authentication)
 app.use("/api/login", loginRouter);
 
@@ -31,6 +44,8 @@ app.use("/api/login", loginRouter);
 app.use(middleware.rules);
 
 app.use("/api/whoami", whoamiRouter);
+
+app.use("/api/info", infoRouter);
 
 // Middleware after all routes
 app.use(middleware.unknownEndpoint);

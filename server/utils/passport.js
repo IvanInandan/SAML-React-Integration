@@ -11,8 +11,8 @@ passport.use(
     {
       issuer: config.saml.issuer,
       protocol: "http://",
-      path: "/api/login/callback",
-      entryPoint: config.saml.entryPoint,
+      path: "/api/login/callback", // Once user logs in at endpoint, this is where IDP will send SAML response to
+      entryPoint: config.saml.entryPoint, // When '/api/login' is reached (GET), it will redirect here. ie: back-end sends SAML request to endpoint
       cert: fs.readFileSync(config.saml.cert, "utf-8"),
     },
     (user, done) => {

@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useSelector } from "react-redux";
 import { Link, Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
@@ -7,6 +6,8 @@ import Settings from "./components/Settings";
 import Login from "./components/Login";
 
 const App = () => {
+  const user = useSelector((state) => state.user);
+
   const padding = {
     padding: 5,
   };
@@ -32,6 +33,10 @@ const App = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/login" element={<Login />} />
       </Routes>
+
+      <div>
+        <h2>Hi, I'm {JSON.stringify(user)}</h2>
+      </div>
     </div>
   );
 };
