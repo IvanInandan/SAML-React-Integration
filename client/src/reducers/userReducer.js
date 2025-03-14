@@ -1,18 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const userSlice = createSlice({
   name: "user",
-  initialState: [],
+  initialState: null,
   reducers: {
-    login(state, action) {
-      console.log("Payload: ", action.payload);
+    setUser(state, action) {
       return action.payload;
     },
-    logout(state, action) {
-      return action.payload;
+    logoutUser(state, action) {
+      return null;
     },
   },
 });
 
-export const { login, logout } = userSlice.actions;
+export const fetchUser = () => async (dispatch) => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/whoami", {
+      withCredentials: true,
+    });
+
+    dispatch(setUser(response.data.user));
+  } catch (error) {
+    dispatch(setUser(null));
+  }
+};
+
+export const { setUser, logoutUser } = userSlice.actions;
 export default userSlice.reducer;

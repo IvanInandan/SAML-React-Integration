@@ -25,6 +25,7 @@ app.use(session(config.session));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// The following logs the session ID + user information on every request
 app.use((req, res, next) => {
   console.log("Session ID:", req.sessionID);
   console.log("User: ", req.user);

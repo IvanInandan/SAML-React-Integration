@@ -1,12 +1,22 @@
-import { useSelector } from "react-redux";
 import { Link, Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import Settings from "./components/Settings";
 import Login from "./components/Login";
 
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchUser } from "./reducers/userReducer";
+
 const App = () => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
+
+  console.log("User session: ", user);
 
   const padding = {
     padding: 5,
@@ -23,9 +33,22 @@ const App = () => {
       <Link to="/settings" style={padding}>
         Settings
       </Link>
-      <Link to="/login" style={padding}>
-        Login
-      </Link>
+
+      {!user && (
+        <a href="/api/login" style={padding}>
+          Login
+        </a>
+      )}
+
+      {user && (
+        <>
+          <a href="/api/logout" style={padding}>
+            Logout
+          </a>
+
+          <span>Hi {user.nameID}!</span>
+        </>
+      )}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -33,10 +56,6 @@ const App = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/login" element={<Login />} />
       </Routes>
-
-      <div>
-        <h2>Hi, I'm {JSON.stringify(user)}</h2>
-      </div>
     </div>
   );
 };
