@@ -8,14 +8,20 @@ const cors = require("cors");
 const middleware = require("./utils/middleware");
 const config = require("./utils/config");
 
-const loginRouter = require("./controllers/login");
+const userRouter = require("./controllers/user");
 const whoamiRouter = require("./controllers/whoami");
-const infoRouter = require("./controllers/info");
+const notesRouter = require("./controllers/notes");
+
+const corsOptions = {
+  origin: "http://localhost:5173", // Allow the frontend (Vite) app
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true, // Allow credentials (cookies) to be sent
+};
 
 const app = express();
 
 // Use cors before all routes
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false })); // Replaces body parser
 app.use(express.json()); // Replaces body parser
 app.use(middleware.requestLogger);
@@ -39,14 +45,12 @@ app.use((req, res, next) => {
 });
 
 // Define login route (passport / SAML authentication)
-app.use("/api/login", loginRouter);
+app.use("/api/user", userRouter);
 
 // Define Rules
 app.use(middleware.rules);
-
 app.use("/api/whoami", whoamiRouter);
-
-app.use("/api/info", infoRouter);
+app.use("/api/notes", notesRouter);
 
 // Middleware after all routes
 app.use(middleware.unknownEndpoint);

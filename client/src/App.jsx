@@ -1,12 +1,11 @@
 import { Link, Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
-import Settings from "./components/Settings";
-import Login from "./components/Login";
 
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchUser } from "./reducers/userReducer";
+import { fetchUser, logoutUser } from "./reducers/userReducer";
+import axios from "axios";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -16,10 +15,25 @@ const App = () => {
     dispatch(fetchUser());
   }, [dispatch]);
 
-  console.log("User session: ", user);
-
   const padding = {
     padding: 5,
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:3001/api/user/logout",
+        {},
+        {
+          withCredentials: true, // Ensure credentials are sent with the request
+        }
+      );
+      dispatch(logoutUser()); // Update your frontend state (e.g., Redux store)
+      window.location.href = "/"; // Redirect to home page or login page
+    } catch (error) {
+      console.log("Logout failed: ", error);
+      // Optionally, show an error message to the user
+    }
   };
 
   return (
@@ -30,31 +44,22 @@ const App = () => {
       <Link to="/app" style={padding}>
         App
       </Link>
-      <Link to="/settings" style={padding}>
-        Settings
-      </Link>
 
       {!user && (
-        <a href="/api/login" style={padding}>
+        <a href="/api/user/login" style={padding}>
           Login
         </a>
       )}
 
       {user && (
-        <>
-          <a href="/api/logout" style={padding}>
-            Logout
-          </a>
-
-          <span>Hi {user.nameID}!</span>
-        </>
+        <a href="/" onClick={handleLogout} style={padding}>
+          Logout
+        </a>
       )}
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/app" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/login" element={<Login />} />
       </Routes>
     </div>
   );

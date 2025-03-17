@@ -20,9 +20,14 @@ export const fetchUser = () => async (dispatch) => {
       withCredentials: true,
     });
 
-    dispatch(setUser(response.data.user));
+    // If a user exists in the back-end session
+    if (response.data.user) {
+      dispatch(setUser(response.data.user));
+    } else {
+      dispatch(logoutUser());
+    }
   } catch (error) {
-    dispatch(setUser(null));
+    dispatch(logoutUser());
   }
 };
 
